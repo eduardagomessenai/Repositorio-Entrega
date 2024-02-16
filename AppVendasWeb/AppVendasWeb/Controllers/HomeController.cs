@@ -22,6 +22,7 @@ namespace AppVendasWeb.Controllers
             return View();
         }
 
+  
         public IActionResult IniciarVenda()
         {
             List<Cliente> listaClientes = _context.Cliente.ToList();
@@ -29,6 +30,8 @@ namespace AppVendasWeb.Controllers
             ViewData["ListaClientes"] = listaClientes;
             ViewData["ListaProdutos"] = listaProdutos;
             ViewData["ClienteSelecionado"] = "Nenhum cliente selecionado";
+            ViewData["IdSelecionado"] = "Nnehum cliente selecionado";
+
             return View();
         }
 
@@ -42,6 +45,7 @@ namespace AppVendasWeb.Controllers
             if (cliente != null)
             {
                 ViewData["ClienteSelecionado"] = cliente.ClienteNome;
+                ViewData["IdSelecionado"] = cliente.ClienteId;
             }
             return View("IniciarVenda");
         }
@@ -57,6 +61,18 @@ namespace AppVendasWeb.Controllers
             {
                 ViewData["ProdutoSelecionado"] = produto;
             }
+            return View("IniciarVenda");
+        }
+
+        [HttpPost]
+        public async Task <IActionResult> IniciarVenda
+            ([Bind("NovaVnedaId,DataVenda,ValorTotal,NotaFiscal,ClienteId,TotalProdutos,TotalDesconto,PercentualDesconto,TotalFinal")] 
+               NovaVenda novaVenda)
+        {
+            List<Cliente> listaClientes = _context.Cliente.Where(c => c.CadastroAtivo == true).ToList();
+            List<Produto> listaProdutos = _context.Produtos.OrderBy(p => p.Descricao).ToList();
+            ViewData["ListaClientes"] = listaClientes;
+            ViewData["ListaProdutos"] = listaProdutos;
             return View("IniciarVenda");
         }
 
